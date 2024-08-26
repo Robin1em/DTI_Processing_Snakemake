@@ -4,18 +4,19 @@ import helper_functions
 
 # create config lists to determine the names of the input files for extracting ROIs in the first rule
 def generate_config():
-    niftis = glob("origs/*AP*.nii*")
-    b_niftis = [x.replace("origs/", "").replace("_AP", "").replace("_iso", "").replace(".nii", "").replace(".gz", "") for x in niftis if not "_b0_" in x]
-    sample_ids = [x.split("_DTI_")[0] for x in b_niftis]
-    b_values = [x.split("_DTI_")[1] for x in b_niftis]
+    niftis = glob("origs/*.nii*")
+    b_niftis = [x.replace("origs/", "").replace("_74", "").replace("_long", "").replace("diff", "").replace("_AP", "").replace("_PA", "").replace("_iso", "").replace(".nii", "").replace(".gz", "") for x in niftis if not "_b0_" in x]
+    sample_ids = [x.split("_ep2d_")[0] for x in b_niftis]
+    b_values = [x.split("_ep2d_")[1] for x in b_niftis]
     shortbvals = glob("bvecs_bvals/*short.bval")
     PA_niftis = glob("origs/*PA*nii*")
-    PA_names = [x.replace ("origs/", "").replace(".nii", "").replace(".gz", "").replace("_iso", "") for x in PA_niftis]
-    jsons = glob("origs/*AP*json")
+    PA_names = [x.replace("origs/", "").replace("_74", "").replace("_long", "").replace("diff", "").replace("_AP", "").replace("_PA", "").replace("_iso", "").replace(".nii", "").replace(".gz", "") for x in PA_niftis]
+    jsons = glob("origs/*json")
     bvecs = glob("origs/*.bvec")
     AP_b0s = [f for f in glob("*b0*.nii.gz") if not "PA" in f]
     return {"sample_ids": sample_ids, "b_values": b_values, "niftis": niftis, "shortbvals": shortbvals, "PA_niftis": PA_niftis, "PA_names": PA_names, "jsons": jsons, "bvecs": bvecs, "AP_b0s": AP_b0s}
 conf = generate_config()
+
 
 # directory for scripts
 script_dir = config["path_to_scripts"]
@@ -76,27 +77,18 @@ rule all:
 
 
 
+
 # extract ROIs
 rule extract_roi:
     input:
-        lambda wc: "origs/" + conf["sample_ids"][conf["b_values"].index(wc.number)] + f"_DTI_{wc.number}_AP_iso.nii.gz"
+        lambda wc: "origs/" + conf["sample_ids"][conf["b_values"].index(wc.number)] + f"_ep2d_diff{wc.number}_74_{'AP' if wc.number == '500' else 'PA'}_long.nii.gz"
     output:
         "con/ddiff_{number}.nii.gz"
     params:
-        roi_params=config["ROI_params"]
+        roi_params=config["ROI_old"]
     shell:
         "fslroi {input} {output} {params.roi_params}"
 
-# extract ROIs from PA
-rule extract_pa_roi:
-    input:
-        conf["PA_niftis"][0]
-    output:
-        "con/" + conf["PA_names"][0] + "_roi.nii.gz"
-    params:
-        roi_params=config["ROI_params"]
-    shell:
-        "fslroi {input} {output} {params.roi_params}"
 
 # list of output file names for rule "split_4D"
 split_output = [f"con/dd{{number}}_{index:04d}.nii.gz" for index in range(bval_length)]
@@ -154,13 +146,6 @@ def generate_b0_input(wc):
     b0_file_names = [f"con/dd{wc['number']}_{x:04d}.nii.gz" for x in bvec_ind]
     return b0_file_names
 
-#rule merge_triplet:
-#    input:
-#        generate_triplet_input
-#    output:
-#        "con/dd{number}_c{index}.nii.gz"
-#    shell:
-#        "fslmerge -t {output} {input}"
 
 rule merge_sets:
     input:
@@ -230,7 +215,7 @@ rule combine_bvals:
     output:
         "sorted_bvals_combined.bval"
     shell:
-        "python {script_dir}combine_bvals.py {input}"
+        "python {script_dir}combine_bvals_oldprot.py {input}"
 
 # do the same for bvecs
 rule combine_bvecs:
@@ -239,7 +224,7 @@ rule combine_bvecs:
     output:
         "sorted_bvecs_combined.bvec"
     shell:
-        "python {script_dir}combine_bvecs.py {input}"
+        "python {script_dir}combine_bvecs_oldprot.py {input}"
 
 
 # rule to make acqparams and index files
@@ -247,12 +232,12 @@ rule create_configs:
     input:
         bval=expand("bvecs_bvals/{sample}_short.bval", sample=samples[0]),
         json=conf["jsons"][0],
-        nii=conf["PA_niftis"][0]
+        nii=conf["niftis"][0]
     output:
         "acqparams.txt",
         "index.txt"
     shell:
-        "python {script_dir}create_config_extended.py --bval {input.bval} --json {input.json} --nii {input.nii}"
+        "python {script_dir}create_config_oldprot.py --bval {input.bval} --json {input.json} --nii {input.nii}"
 
 
 def sort_niftis(unsorted_list):
@@ -261,12 +246,11 @@ def sort_niftis(unsorted_list):
 # merge b0s
 rule merge_all_b0s:
     input:
-        b0_AP = expand("con/b0_{number}.nii.gz", number=sort_niftis(conf["b_values"])),
-        b0_PA = "con/" + conf["PA_names"][0] + "_roi.nii.gz"
+        b0_AP = expand("con/b0_{number}.nii.gz", number=sort_niftis(conf["b_values"]))
     output:
         "b0_AP_PA.nii.gz"
     shell:
-        "fslmerge -t {output} {input.b0_AP} {input.b0_PA}"
+        "fslmerge -t {output} {input.b0_AP}"
 
 # adds elements of nested list together, [] as start value; default start value = 0 -> can't add lists to 0
 def flatten_list(nested_list):
@@ -327,7 +311,7 @@ rule eddy:
         acqp = "acqparams.txt",
         index = "index.txt",
         bvec = "sorted_bvecs_combined.bvec",
-        bval = "sorted_bvals_combined.bval",
+        bval = "sorted_bvals_combined.bval"
     output:
         "ec_data.eddy_rotated_bvecs",
         "ec_data.nii.gz"
