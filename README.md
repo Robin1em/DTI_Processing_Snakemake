@@ -23,8 +23,8 @@ The conda environment described in this tutorial can be used to run the workflow
 # Which of the two Snakemake files should you use?
 
 There are two slightly different Snakemake workflows: 
-- [ ] One workflow for datasets with one or more NIfTI files recorded in AP direction with different b-values, interspersed with b0 volumes and one NIfTI file in PA direction containing only b0 volumes and the corresponding bvec, bval and json files
-- [ ] One workflow for datasets with one NIfTI file in AP and one NIfTI file in PA direction with different b-values, interspersed with b0 volumes and the corresponding bvec, bval and json files; these datasets don’t contain separate b0 NIfTI files
+- One workflow for datasets with one or more NIfTI files recorded in AP direction with different b-values, interspersed with b0 volumes and one NIfTI file in PA direction containing only b0 volumes and the corresponding bvec, bval and json files
+- One workflow for datasets with one NIfTI file in AP and one NIfTI file in PA direction with different b-values, interspersed with b0 volumes and the corresponding bvec, bval and json files; these datasets don’t contain separate b0 NIfTI files
 
 For the former, use the DTI_Snakemake.smk workflow and the „ROI_params“ section in config.yml for the fslroi operation; For the latter, use the DTI_Snakemake_old_prot.smk workflow and the „ROI_old“ section in config.yml.
 
