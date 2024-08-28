@@ -3,14 +3,14 @@
 Automated processing pipeline for DTI (Diffusion Tensor Imaging) data, specifically for images of DRG (Dorsal Root Ganglia)
 
 ## What does this pipeline do?
-- [ ] ROIs are extracted from the images, using fslroi (the parameters can be set in config.yml)
-- [ ] The original NIfTI files are split into single volumes and then remergd into two new files (One with all volumes recorded in AP direction with b-values in spending order and one with all b0 volumes, in both AP and PA direction); 
-- [ ] For datasets with multiple consecutive volumes with the same bvec entries, these volumes are shortened to one and their temporal mean is calculated
-- [ ] The content of the bvec and bval files is rearranged in new files to match the new NIfTI files
-- [ ] Config files for popup and eddy are created
-- [ ] Then topup and eddy are applied
-- [ ] A folder for DTIFit is created and copied for BEDPOSTX (they need the same input data, but different folders)
-- [ ] BEDPOSTX and DTIFit are executed
+- ROIs are extracted from the images, using fslroi (the parameters can be set in config.yml)
+- The original NIfTI files are split into single volumes and then remergd into two new files (One with all volumes recorded in AP direction with b-values in spending order and one with all b0 volumes, in both AP and PA direction); 
+- For datasets with multiple consecutive volumes with the same bvec entries, these volumes are shortened to one and their temporal mean is calculated
+- The content of the bvec and bval files is rearranged in new files to match the new NIfTI files
+- Config files for popup and eddy are created
+- Then topup and eddy are applied
+- A folder for DTIFit is created and copied for BEDPOSTX (they need the same input data, but different folders)
+- BEDPOSTX and DTIFit are executed
 
 The workflow can be run with SLURM in several directories simultaneously and takes about eight to ten hours to finish.
 
