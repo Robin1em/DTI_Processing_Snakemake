@@ -45,4 +45,4 @@ Or with SLURM:
 `snakemake --cores 2  -p --executor slurm --jobs 10 --default-resources mem_mb=1000 cpus_per_task=2 --snakefile /path/to/snakefile --configfile /path/to/config.yml --latency-wait 1000` 
 
 Alterantively, if you have multiple directories in which you want to run the workflow, you can use the script `run_snakemake_in_multiple_dirs.sh`. In this script, you need to replace the default paths with the paths to your data, your snakefile and your config.yml file. 
-The bash script needs to be open the whole time while the workflow is running (I know, that’s a bit inconvenient, sorry), so to prevent interruptions, it’s best to run it in a tmux or screen session.
+The script needs to be open the whole time while the workflow is running (I know, that’s a bit inconvenient, sorry), so to prevent interruptions, it’s best to run it in a tmux or screen session.
