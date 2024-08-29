@@ -37,9 +37,11 @@ The configuration file `config.yml` allows you to set the path to the directory 
 # How to run the workflow
 
 You can either navigate into the directory in which your raw data is located and then run the following command (Note that the directory needs a sub-directory called „origs“ that contains the raw data):
+
 `snakemake --cores 2  -p --snakefile /path/to/snakefile --configfile /path/to/config.yml --latency-wait 1000` 
 
 Or with SLURM: 
+
 `snakemake --cores 2  -p --executor slurm --jobs 10 --default-resources mem_mb=1000 cpus_per_task=2 --snakefile /path/to/snakefile --configfile /path/to/config.yml --latency-wait 1000` 
 
 Alterantively, if you have multiple directories in which you want to run the workflow, you can use the script `run_snakemake_in_multiple_dirs.sh`. In this script, you need to replace the default paths with the paths to your data, your snakefile and your config.yml file. 
