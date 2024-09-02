@@ -17,7 +17,7 @@ The workflow can be run with SLURM in several directories simultaneously and tak
 
 # Conda environment
 
-The conda environment described in this tutorial can be used to run the workflow:  https://snakemake.readthedocs.io/en/stable/tutorial/tutorial.html
+`mamba env create -f environment.yml`
 
 
 # Which of the two Snakemake files should you use?
