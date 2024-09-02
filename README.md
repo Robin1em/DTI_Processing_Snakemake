@@ -3,7 +3,7 @@
 Automated processing pipeline for DTI (Diffusion Tensor Imaging) data, specifically for images of DRG (Dorsal Root Ganglia)
 
 ## What does this pipeline do?
-- ROIs are extracted from the images, using fslroi (the parameters can be set in config.yml)
+- ROIs are extracted from the images, using fslroi (the parameters can be set in `config.yml`)
 - The original NIfTI files are split into single volumes and then remergd into two new files (One with all volumes recorded in AP direction with b-values in ascending order and one with all b0 volumes, in both AP and PA direction); 
 - For datasets with multiple consecutive volumes with the same bvec entries, these volumes are shortened to one and their temporal mean is calculated
 - The content of the bvec and bval files is rearranged in new files to match the new NIfTI files
@@ -37,10 +37,22 @@ The configuration file `config.yml` allows you to set the path to the directory 
 # How to run the workflow
 
 You can either navigate into the directory in which your raw data is located and then run the following command (Note that the directory needs a sub-directory called „origs“ that contains the raw data):
+
 `snakemake --cores 2  -p --snakefile /path/to/snakefile --configfile /path/to/config.yml --latency-wait 1000` 
 
 Or with SLURM: 
+
 `snakemake --cores 2  -p --executor slurm --jobs 10 --default-resources mem_mb=1000 cpus_per_task=2 --snakefile /path/to/snakefile --configfile /path/to/config.yml --latency-wait 1000` 
 
+Explanation of the parameters:
+- `--cores 2`: Maximum number of cores used for parallel execution
+- `-p`: Prints the shell commands executed by the Snakemake rules; not necessary to run the code, but very helpful to keep track of the progress and for debugging
+- `--latency-wait`: Latency wait time in milliseconds (1 second in this case). This is the time Snakemake waits for a job to finish before checking its status again. This helps reduce the load on cluster systems
+- `--executor`: Job scheduler for cluster execution (SLURM in this case)
+- `--default-resources`: Default resource requirements for all rules in the workflow:
+  - `mem_mb`: Memory per task in MB
+  - `cpus_per_task`: Number of CPUs per task
+- `snakefile` and `configfile`: Paths to the respective files
+
 Alterantively, if you have multiple directories in which you want to run the workflow, you can use the script `run_snakemake_in_multiple_dirs.sh`. In this script, you need to replace the default paths with the paths to your data, your snakefile and your config.yml file. 
-The bash script needs to be open the whole time while the workflow is running (I know, that’s a bit inconvenient, sorry), so to prevent interruptions, it’s best to run it in a tmux or screen session.
+The script needs to be open the whole time while the workflow is running (I know, that’s a bit inconvenient, sorry), so to prevent interruptions, it’s best to run it in a tmux or screen session.
