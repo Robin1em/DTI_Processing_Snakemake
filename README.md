@@ -41,6 +41,7 @@ With:
 - `800`: B-value
 - `AP`: Phase-encoding direction; fixed name part
 - `nii.gz`: File name extension; `.gz` is optional
+  
 The corresponding .bval, .bvec and .json files should have the same names with the respective extension.
 
 For the b0 volumes in PA direction, only a NIfTI and a .json file are necessary. They should be named after this scheme: `014_DTI_b0_PA` with the respective name extension
