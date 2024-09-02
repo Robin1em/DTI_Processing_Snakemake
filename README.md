@@ -34,6 +34,7 @@ For the former, use the `DTI_Snakemake.smk` workflow and the `ROI_params` sectio
 ## For DTI_Snakemake.smk:
 
 The NIfTI files for the volumes in AP direction should look something like this: `006_DTI_800_AP.nii.gz`
+
 With
 - `006`: Sample ID
 - `DTI`: Fixed part of the name between Sample ID and b-value
@@ -47,6 +48,7 @@ For the b0 volumes in PA direction, only a NIfTI and a .json file are necessary.
 ## For DTI_Snakemake_old_prot.smk:
 
 All files should be named after this scheme: `017_diff800_PA.ext`
+
 With
 - `017`: Sample ID
 - `diff800`: Fixed name part + b-value
