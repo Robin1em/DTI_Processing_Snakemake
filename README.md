@@ -44,5 +44,15 @@ Or with SLURM:
 
 `snakemake --cores 2  -p --executor slurm --jobs 10 --default-resources mem_mb=1000 cpus_per_task=2 --snakefile /path/to/snakefile --configfile /path/to/config.yml --latency-wait 1000` 
 
+Explanation of the parameters:
+- `--cores 2`: Maximum number of cores used for parallel execution
+- `-p`: Prints the shell commands executed by the Snakemake rules; not necessary to run the code, but very helpful to keep track of the progress and for debugging
+- `--latency-wait`: Latency wait time in milliseconds (1 second in this case). This is the time Snakemake waits for a job to finish before checking its status again. This helps reduce the load on cluster systems
+- `--executor`: Job scheduler for cluster execution (SLURM in this case)
+- `--default-resources`: Default resource requirements for all rules in the workflow:
+  - `mem_mb`: Memory per task in MB
+  - `cpus_per_task`: Number of CPUs per task
+- `snakefile` and `configfile`: Paths to the respective files
+
 Alterantively, if you have multiple directories in which you want to run the workflow, you can use the script `run_snakemake_in_multiple_dirs.sh`. In this script, you need to replace the default paths with the paths to your data, your snakefile and your config.yml file. 
 The script needs to be open the whole time while the workflow is running (I know, that’s a bit inconvenient, sorry), so to prevent interruptions, it’s best to run it in a tmux or screen session.
