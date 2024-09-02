@@ -5,12 +5,12 @@ import helper_functions
 # create config lists to determine the names of the input files for extracting ROIs in the first rule
 def generate_config():
     niftis = glob("origs/*AP*.nii*")
-    b_niftis = [x.replace("origs/", "").replace("_AP", "").replace("_iso", "").replace(".nii", "").replace(".gz", "") for x in niftis if not "_b0_" in x]
+    b_niftis = [x.replace("origs/", "").replace("_AP", "").replace("_iso", ""). replace(".nii", "").replace(".gz", "").replace("_2.2", "") for x in niftis if not "_b0_" in x]
     sample_ids = [x.split("_DTI_")[0] for x in b_niftis]
     b_values = [x.split("_DTI_")[1] for x in b_niftis]
     shortbvals = glob("bvecs_bvals/*short.bval")
     PA_niftis = glob("origs/*PA*nii*")
-    PA_names = [x.replace ("origs/", "").replace(".nii", "").replace(".gz", "").replace("_iso", "") for x in PA_niftis]
+    PA_names = [x.replace ("origs/", "").replace(".nii", "").replace(".gz", "").replace("_iso", "").replace("_2.2", "") for x in PA_niftis]
     jsons = glob("origs/*AP*json")
     bvecs = glob("origs/*.bvec")
     AP_b0s = [f for f in glob("*b0*.nii.gz") if not "PA" in f]
