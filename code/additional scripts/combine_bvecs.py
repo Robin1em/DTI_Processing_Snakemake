@@ -5,7 +5,7 @@ from glob import glob
 
 def generate_config():
     niftis = glob("origs/*AP*.nii*")
-    b_niftis = [x.replace("origs/", "").replace("_AP", "").replace("_iso", ""). replace(".nii", "").replace(".gz", "") for x in niftis if not "_b0_" in x]
+    b_niftis = [x.replace("origs/", "").replace("_AP", "").replace("_iso", ""). replace(".nii", "").replace(".gz", "").replace("_2.2", "") for x in niftis if not "_b0_" in x]
     sample_ids = [x.split("_DTI_")[0] for x in b_niftis]
     b_values = [x.split("_DTI_")[1] for x in b_niftis]
     shortbvals = glob("bvecs_bvals/*short.bval")
