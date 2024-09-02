@@ -29,6 +29,34 @@ There are two slightly different Snakemake workflows:
 For the former, use the `DTI_Snakemake.smk` workflow and the `ROI_params` section in `config.yml` for the fslroi operation; For the latter, use the `DTI_Snakemake_old_prot.smk` workflow and the `ROI_old` section in `config.yml`.
 
 
+# How should the data be named?
+
+## For DTI_Snakemake.smk:
+
+The NIfTI files for the volumes in AP direction should look something like this: `006_DTI_800_AP.nii.gz`
+With
+- `006`: Sample ID
+- `DTI`: Fixed part of the name between Sample ID and b-value
+- `800`: B-value
+- `AP`: Phase-encoding direction; fixed name part
+- `nii.gz`: File name extension; `.gz` is optional
+The corresponding .bval, .bvec and .json files should have the same names with the respective extension.
+
+For the b0 volumes in PA direction, only a NIfTI and a .json file are necessary. They should be named after this scheme: `014_DTI_b0_PA` with the respective name extension
+
+## For DTI_Snakemake_old_prot.smk:
+
+All files should be named after this scheme: `017_diff800_PA.ext`
+With
+- `017`: Sample ID
+- `diff800`: Fixed name part + b-value
+- `PA`: Phase-encoding direction (either AP or PA)
+  
+## Naming flexibility
+
+I will keep improving the workflow so that it allows for a more flexible naming of the input files. As of now, certain additional parts, like `_long`, `_iso`, `_ep2d` or `_2.2` may also be contained in the file names without causing trouble.
+
+
 # Config.yml
 
 The configuration file `config.yml` allows you to set the path to the directory that contains all additional python scripts that are used in the workflow, as well as the parameters for fslroi (separately for both Snakefiles) and the max runtime for each SLURM job. 
