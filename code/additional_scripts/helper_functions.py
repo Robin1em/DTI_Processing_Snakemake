@@ -42,4 +42,15 @@ def generate_config():
     AP_b0s = [f for f in glob("*b0*.nii.gz") if not "PA" in f]
     return {"sample_ids": sample_ids, "b_values": b_values, "niftis": niftis, "shortbvals": shortbvals, "PA_niftis": PA_niftis, "PA_names": PA_names, "jsons": jsons, "bvecs": bvecs, "AP_b0s": AP_b0s}
 
-#conf = generate_config()
+def generate_config_oldprot():
+    niftis = glob("origs/*diff*.nii*")
+    b_niftis = [x.replace("origs/", "").replace("_74", "").replace("_long", "").replace("diff", "").replace("_AP", "").replace("_PA", "").replace("_iso", "").replace(".nii", "").replace(".gz", "") for x in niftis if not "_b0_" in x]
+    sample_ids = [x.split("_ep2d_")[0] for x in b_niftis]
+    b_values = [x.split("_ep2d_")[1] for x in b_niftis]
+    shortbvals = glob("bvecs_bvals/*short.bval")
+    PA_niftis = glob("origs/*PA*nii*")
+    PA_names = [x.replace("origs/", "").replace("_74", "").replace("_long", "").replace("diff", "").replace("_AP", "").replace("_PA", "").replace("_iso", "").replace(".nii", "").replace(".gz", "") for x in PA_niftis]
+    jsons = glob("origs/*diff*json")
+    bvecs = glob("origs/*.bvec")
+    #AP_b0s = [f for f in glob("*b0*.nii.gz") if not "PA" in f]
+    return {"sample_ids": sample_ids, "b_values": b_values, "niftis": niftis, "shortbvals": shortbvals, "PA_niftis": PA_niftis, "PA_names": PA_names, "jsons": jsons, "bvecs": bvecs}#, "AP_b0s": AP_b0s}
