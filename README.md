@@ -17,7 +17,7 @@ The workflow can be run with SLURM in several directories simultaneously and tak
 
 # Conda environment
 
-The conda environment described in this tutorial can be used to run the workflow:  https://snakemake.readthedocs.io/en/stable/tutorial/tutorial.html
+`mamba env create -f environment.yml`
 
 
 # Which of the two Snakemake files should you use?
@@ -76,9 +76,9 @@ Or with SLURM:
 `snakemake --cores 2  -p --executor slurm --jobs 10 --default-resources mem_mb=1000 cpus_per_task=2 --snakefile /path/to/snakefile --configfile /path/to/config.yml --latency-wait 1000` 
 
 Explanation of the parameters:
-- `--cores 2`: Maximum number of cores used for parallel execution
+- `--cores`: Maximum number of cores used for parallel execution; this parameter is mandatory
 - `-p`: Prints the shell commands executed by the Snakemake rules; not necessary to run the code, but very helpful to keep track of the progress and for debugging
-- `--latency-wait`: Latency wait time in milliseconds (1 second in this case). This is the time Snakemake waits for a job to finish before checking its status again. This helps reduce the load on cluster systems
+- `--latency-wait`: Latency wait time in milliseconds; this is the time Snakemake waits for a job to finish before checking its status again. This helps reduce the load on cluster systems
 - `--executor`: Job scheduler for cluster execution (SLURM in this case)
 - `--default-resources`: Default resource requirements for all rules in the workflow:
   - `mem_mb`: Memory per task in MB
