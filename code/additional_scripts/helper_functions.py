@@ -37,7 +37,7 @@ def generate_config():
     shortbvals = glob("bvecs_bvals/*short.bval")
     PA_niftis = glob("origs/*PA*nii*")
     PA_names = [x.replace ("origs/", "").replace(".nii", "").replace(".gz", "").replace("_iso", "").replace("_2.2", "") for x in PA_niftis]
-    jsons = glob("origs/*AP*json")
+    jsons = glob("origs/*DTI*AP*json")
     bvecs = glob("origs/*.bvec")
     AP_b0s = [f for f in glob("*b0*.nii.gz") if not "PA" in f]
     return {"sample_ids": sample_ids, "b_values": b_values, "niftis": niftis, "shortbvals": shortbvals, "PA_niftis": PA_niftis, "PA_names": PA_names, "jsons": jsons, "bvecs": bvecs, "AP_b0s": AP_b0s}
