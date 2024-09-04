@@ -3,19 +3,7 @@ import numpy as np
 import helper_functions
 
 # create config lists to determine the names of the input files for extracting ROIs in the first rule
-def generate_config():
-    niftis = glob("origs/*AP*.nii*")
-    b_niftis = [x.replace("origs/", "").replace("_AP", "").replace("_iso", ""). replace(".nii", "").replace(".gz", "").replace("_2.2", "") for x in niftis if not "_b0_" in x]
-    sample_ids = [x.split("_DTI_")[0] for x in b_niftis]
-    b_values = [x.split("_DTI_")[1] for x in b_niftis]
-    shortbvals = glob("bvecs_bvals/*short.bval")
-    PA_niftis = glob("origs/*PA*nii*")
-    PA_names = [x.replace ("origs/", "").replace(".nii", "").replace(".gz", "").replace("_iso", "").replace("_2.2", "") for x in PA_niftis]
-    jsons = glob("origs/*AP*json")
-    bvecs = glob("origs/*.bvec")
-    AP_b0s = [f for f in glob("*b0*.nii.gz") if not "PA" in f]
-    return {"sample_ids": sample_ids, "b_values": b_values, "niftis": niftis, "shortbvals": shortbvals, "PA_niftis": PA_niftis, "PA_names": PA_names, "jsons": jsons, "bvecs": bvecs, "AP_b0s": AP_b0s}
-conf = generate_config()
+conf = helper_functions.generate_config()
 
 # directory for scripts
 script_dir = config["path_to_scripts"]
@@ -79,7 +67,7 @@ rule all:
 # extract ROIs
 rule extract_roi:
     input:
-        lambda wc: "origs/" + conf["sample_ids"][conf["b_values"].index(wc.number)] + f"_DTI_{wc.number}_AP_iso.nii.gz"
+        lambda wc: [x for x in conf["niftis"] if f"DTI_{wc}" in x][0]
     output:
         "con/ddiff_{number}.nii.gz"
     params:
