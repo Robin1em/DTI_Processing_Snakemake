@@ -1,22 +1,9 @@
 import os
-import subprocess   # enables use of command-line functions in python
-import re           # support for regular expressions
-import argparse     # to run the script from the command line
+import argparse
 from glob import glob
+from helper_functions import generate_config_oldprot
 
-# create config lists to determine the names of the input files for extracting ROIs in the first rule
-def generate_config():
-    niftis = glob("origs/*AP*.nii*")
-    b_niftis = [x.replace("origs/", "").replace("_AP", "").replace("_iso", ""). replace(".nii", "").replace(".gz", "").replace("_2.2", "") for x in niftis if not "_b0_" in x]
-    sample_ids = [x.split("_DTI_")[0] for x in b_niftis]
-    b_values = [x.split("_DTI_")[1] for x in b_niftis]
-    shortbvals = glob("origs/*short.bval")
-    PA_niftis = glob("origs/*PA*nii*")
-    jsons = glob("origs/*AP*json")
-    bvecs = glob("origs/*.bvec")
-    AP_b0s = [f for f in glob("*b0*.nii.gz") if not "PA" in f]
-    return {"sample_ids": sample_ids, "b_values": b_values, "niftis": niftis, "shortbvals": shortbvals, "PA_niftis": PA_niftis, "jsons": jsons, "bvecs": bvecs, "AP_b0s": AP_b0s}
-config = generate_config()
+conf = generate_config_oldprot()
 
 
 ### index.txt ###
@@ -80,24 +67,23 @@ def count_numbers(bval_file):
 
     return counts, zero_count, non_zero_count
 
-# Function to extract the number of volumes from nifti file using the command line function 'fslinfo'
 def number_of_volumes(niftifile):
-    # Run the fslinfo command and capture the output
-    result = subprocess.run(['fslinfo', niftifile], capture_output=True, text=True)
+    with open(niftifile, 'r') as file:
+        content = file.read()
 
-    # Use regular expression to find the number of volumes
-    # r' prefix: raw string (commonly used for regular expressions in python)
-    # dim4: literal match for the characters "dim4" in the string
-    # \s: matches zero or more whitespace characters
-    # ([\d]+): capturing group that matches one or more digits (\d)
-    # parentheses () are used to capture the matched digits so that they can be extracted later
-    match = re.search(r'dim4\s+([\d]+)', result.stdout)
-    if match:
-        volume_count = int(match.group(1))
-        return volume_count
+    # Split content into a list of integers
+    numbers = list(map(int, content.split()))
 
-    # Return None if number of volumes is not found
-    return None
+    # Count occurrences of each number
+    counts = {}
+    for num in numbers:
+        counts[num] = counts.get(num, 0) + 1
+
+    # Count the number of "0"s and non-"0"s
+    zero_count = counts.get(0, 0)
+    non_zero_count = len(numbers) - zero_count
+
+    return counts, zero_count, non_zero_count
 
 
 ### Argparse
@@ -134,23 +120,15 @@ if __name__ == '__main__':
         print("One or both keys for column 4 not found")
 
     _, zero_count, _ = count_numbers(bvalfile)
-    num_volumes = number_of_volumes(niftifile)
 
     positive_line = f'0 1 0 {expression_result}\n'
     negative_line = f'0 -1 0 {expression_result}\n'
 
-    if len(config["bvecs"]) > 1:
-        with open(acqparams_file_path, 'w') as params_file:
-            for i in range(zero_count*len(config["bvecs"])):
-                params_file.write(positive_line)
-            for i in range(num_volumes):
-                params_file.write(negative_line)
-    else:
-        with open(acqparams_file_path, 'w') as params_file:
-            for i in range(zero_count):
-                params_file.write(positive_line)
-            for i in range(num_volumes):
-                params_file.write(negative_line)
+with open(acqparams_file_path, 'w') as params_file:
+    for i in range(zero_count):
+        params_file.write(positive_line)
+    for i in range(zero_count):
+        params_file.write(negative_line)
 
 
 ### in case there are more b-values than one and therefore a combined bval file -> adjust index.txt ###
@@ -172,7 +150,7 @@ max_index = get_maximum_index()
 
 # add biggest value from index.txt to every line in index_new.txt
 def extend_index():
-    if len(config["bvecs"]) > 1:
+    if len(conf["bvecs"]) > 1:
         with open("index.txt", 'r') as file:
             with open("index_new.txt", 'w') as output_file:
                 for line in file:
