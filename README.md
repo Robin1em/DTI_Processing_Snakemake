@@ -1,3 +1,9 @@
+# Repository moved
+
+> [!CAUTION]
+> This repository is outdated.
+> Further development on this pipeline happens in [BioMeDS/DTI_Processing_Snakemake](https://github.com/BioMeDS/DTI_Processing_Snakemake/)
+
 # Overview
 
 Automated processing pipeline for DTI (Diffusion Tensor Imaging) data, specifically for images of DRG (Dorsal Root Ganglia)
